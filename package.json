@@ -20,6 +20,7 @@
     "@renderx-plugins/canvas-component": "^1.0.10",
     "@renderx-plugins/host-sdk": "^1.0.4-rc.0",
     "gif.js.optimized": "^1.0.1",
+    "musical-conductor": "^1.4.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

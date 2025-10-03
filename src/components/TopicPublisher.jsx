@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { EventRouter } from '@renderx-plugins/host-sdk'
+import { useEventBus, useConductorStatus } from '../ConductorProvider'
 import './TopicPublisher.css'
 
 /**
@@ -7,6 +7,8 @@ import './TopicPublisher.css'
  * Allows testing various canvas component topics with custom payloads
  */
 function TopicPublisher() {
+  const eventBus = useEventBus()
+  const { isInitialized } = useConductorStatus()
   const [selectedTopic, setSelectedTopic] = useState('canvas.component.select')
   const [payload, setPayload] = useState('{"elementId": "test-element-1"}')
   const [publishLog, setPublishLog] = useState([])
@@ -90,9 +92,13 @@ function TopicPublisher() {
       // Parse the payload
       const parsedPayload = JSON.parse(payload)
       
-      // Publish the topic
+      // Publish the topic via EventBus
       console.log(`📢 Publishing topic: ${selectedTopic}`, parsedPayload)
-      EventRouter.publish(selectedTopic, parsedPayload)
+      if (eventBus && eventBus.emit) {
+        eventBus.emit(selectedTopic, parsedPayload)
+      } else {
+        throw new Error('EventBus not available or emit method not found')
+      }
       
       // Add to log
       const logEntry = {

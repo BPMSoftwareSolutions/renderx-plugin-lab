@@ -2,12 +2,15 @@
 
 A React-based lab for testing RenderX plugins in isolation
 
-## Installed Plugins
-- `@renderx-plugins/canvas-component@1.0.10`
+## Installed Packages
+- `@renderx-plugins/canvas-component@1.0.10` - Canvas component plugin
+- `@renderx-plugins/host-sdk@1.0.4-rc.0` - Host SDK for plugin interactions
+- `musical-conductor@1.4.5` - Sequence orchestration engine
 
 ## Tech Stack
 - ⚛️ React 19
 - ⚡ Vite - Fast build tool and dev server
+- 🎼 Musical Conductor - Full orchestration system
 - 🎨 Modern CSS with gradient design
 
 ## Getting Started

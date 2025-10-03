@@ -82,19 +82,21 @@ function QuickReference() {
       </div>
 
       <div className="ref-section">
-        <h4>⚠️ Standalone Lab Limitations</h4>
+        <h4>🎼 Musical Conductor Integration</h4>
         <p>
-          This is a <strong>standalone testing environment</strong> without a full RenderX host. 
-          Some features require the host application to initialize certain services:
+          This lab includes a <strong>fully functional Musical Conductor</strong> orchestration system! 
+          The Conductor and EventBus are automatically initialized when the app starts.
         </p>
         <ul className="tips-list">
-          <li><strong>Conductor:</strong> Not initialized in standalone mode. Symphony Player will simulate execution and show what would be sent.</li>
-          <li><strong>EventRouter:</strong> Available and functional for testing topic publishing.</li>
-          <li><strong>Canvas Elements:</strong> No actual canvas or components exist, so operations won't have visual effects.</li>
+          <li><strong>✅ Musical Conductor:</strong> Fully initialized and ready to orchestrate symphonies</li>
+          <li><strong>✅ EventBus:</strong> Available for publishing and subscribing to events</li>
+          <li><strong>✅ Canvas Plugin:</strong> Registered and ready to handle sequences</li>
+          <li><strong>⚠️ Visual Canvas:</strong> No actual canvas UI exists, but operations will execute</li>
         </ul>
         <p>
-          <strong>Recommendation:</strong> Use the <strong>Topic Publisher</strong> for fully functional testing, 
-          and the <strong>Symphony Player</strong> to understand the API structure.
+          <strong>What this means:</strong> Both the <strong>Topic Publisher</strong> and 
+          <strong>Symphony Player</strong> are fully functional! You can test real event publishing 
+          and symphony orchestration.
         </p>
       </div>
 

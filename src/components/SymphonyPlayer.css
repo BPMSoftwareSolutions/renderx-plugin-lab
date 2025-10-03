@@ -18,37 +18,63 @@
   margin-bottom: 1.5rem;
 }
 
-.warning-message {
-  background: #fff3cd;
-  border: 2px solid #ffc107;
+.error-message {
+  background: #fff5f5;
+  border: 2px solid #dc3545;
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
-.warning-message h4 {
+.error-message h4 {
   margin-top: 0;
-  color: #856404;
+  color: #dc3545;
   font-size: 1.1rem;
 }
 
-.warning-message p {
-  color: #856404;
+.error-message p {
+  color: #721c24;
   line-height: 1.6;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
-.warning-message ul {
-  color: #856404;
-  margin: 0.5rem 0 1rem 1.5rem;
-  line-height: 1.6;
+.info-message {
+  background: #d1ecf1;
+  border: 2px solid #17a2b8;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.warning-message .info-note {
-  background: white;
-  border-left: 4px solid #667eea;
-  padding: 0.75rem;
-  border-radius: 4px;
+.info-message h4 {
+  margin-top: 0;
+  color: #0c5460;
+  font-size: 1.1rem;
+}
+
+.info-message p {
+  color: #0c5460;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.success-message {
+  background: #d4edda;
+  border: 2px solid #28a745;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.success-message h4 {
+  margin-top: 0;
+  color: #155724;
+  font-size: 1.1rem;
+}
+
+.success-message p {
+  color: #155724;
+  line-height: 1.6;
   margin-bottom: 0;
 }
 
