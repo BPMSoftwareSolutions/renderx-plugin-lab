@@ -45,6 +45,33 @@ npm run dev
 npm run build
 ```
 
+### Run E2E Tests
+```bash
+# Interactive mode (opens Cypress UI)
+npm run cypress
+
+# Headless mode (CI/CD)
+npm run cypress:headless
+```
+
+## 🧪 Testing
+
+### E2E Tests with Cypress
+The lab includes Cypress E2E tests to verify symphony execution:
+
+```bash
+# Start dev server (in one terminal)
+npm run dev
+
+# Open Cypress (in another terminal)
+npm run cypress
+```
+
+The test suite includes:
+- **Plugin Registration**: Verifies plugins are properly registered
+- **Symphony Execution**: Tests playing symphonies with data
+- **Canvas Viewer**: Validates component creation and display
+
 ## 🏗️ Architecture
 
 ### Pure Data-Driven Design

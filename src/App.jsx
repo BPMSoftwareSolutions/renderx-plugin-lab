@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import TopicPublisher from './components/TopicPublisher'
 import SymphonyPlayer from './components/SymphonyPlayer'
 import QuickReference from './components/QuickReference'
+import CanvasViewer from './components/CanvasViewer'
 import { getPluginsSummary } from './utils/sequenceLoader'
 import './App.css'
 
@@ -44,41 +45,50 @@ function App() {
       </header>
 
       <main className="app-main">
+        <div className="split-layout">
+          {/* Left Panel - Controls */}
+          <div className="left-panel">
+            <div className="tabs">
+              <button 
+                className={`tab ${activeTab === 'topics' ? 'active' : ''}`}
+                onClick={() => setActiveTab('topics')}
+              >
+                📢 Topics
+              </button>
+              <button 
+                className={`tab ${activeTab === 'symphonies' ? 'active' : ''}`}
+                onClick={() => setActiveTab('symphonies')}
+              >
+                🎵 Symphonies
+              </button>
+              <button 
+                className={`tab ${activeTab === 'reference' ? 'active' : ''}`}
+                onClick={() => setActiveTab('reference')}
+              >
+                📚 Reference
+              </button>
+            </div>
 
-        <div className="tabs">
-          <button 
-            className={`tab ${activeTab === 'topics' ? 'active' : ''}`}
-            onClick={() => setActiveTab('topics')}
-          >
-            📢 Topics
-          </button>
-          <button 
-            className={`tab ${activeTab === 'symphonies' ? 'active' : ''}`}
-            onClick={() => setActiveTab('symphonies')}
-          >
-            🎵 Symphonies
-          </button>
-          <button 
-            className={`tab ${activeTab === 'reference' ? 'active' : ''}`}
-            onClick={() => setActiveTab('reference')}
-          >
-            📚 Reference
-          </button>
-        </div>
+            <div className="tab-content">
+              {activeTab === 'topics' && <TopicPublisher />}
+              {activeTab === 'symphonies' && <SymphonyPlayer />}
+              {activeTab === 'reference' && <QuickReference />}
+            </div>
+          </div>
 
-        <div className="tab-content">
-          {activeTab === 'topics' && <TopicPublisher />}
-          {activeTab === 'symphonies' && <SymphonyPlayer />}
-          {activeTab === 'reference' && <QuickReference />}
+          {/* Right Panel - Canvas Viewer */}
+          <div className="right-panel">
+            <CanvasViewer />
+          </div>
         </div>
 
         <div className="tips-footer">
           <h3>💡 Pro Tips</h3>
           <ul>
+            <li>Watch the <strong>Canvas Viewer</strong> update in real-time as you publish topics or play symphonies</li>
             <li>Open browser DevTools (F12) to see detailed console logs</li>
-            <li>Try publishing topics to trigger events in the system</li>
-            <li>Play symphonies to execute complete workflows</li>
-            <li>Experiment with different payload structures and combinations</li>
+            <li>Try creating components with <code>canvas.component.create</code> topic</li>
+            <li>Experiment with drag, select, and update operations</li>
           </ul>
         </div>
       </main>
