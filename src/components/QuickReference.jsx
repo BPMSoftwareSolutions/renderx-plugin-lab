@@ -15,8 +15,8 @@ function QuickReference() {
         <div className="example-box">
           <strong>Example:</strong>
           <pre>{`EventRouter.publish(
-  'canvas.component.select',
-  { elementId: 'button-1' }
+  'your.topic.name',
+  { /* your data */ }
 )`}</pre>
         </div>
       </div>
@@ -31,9 +31,9 @@ function QuickReference() {
         <div className="example-box">
           <strong>Example:</strong>
           <pre>{`conductor.play(
-  'CanvasComponentSelectPlugin',
-  'canvas-component-select-symphony',
-  { elementId: 'button-1' }
+  'YourPluginId',
+  'your-sequence-id',
+  { /* your data */ }
 )`}</pre>
         </div>
       </div>
@@ -69,16 +69,22 @@ function QuickReference() {
       </div>
 
       <div className="ref-section">
-        <h4>🎬 Available Actions</h4>
-        <ul className="action-list">
-          <li><strong>Select/Deselect:</strong> Manage component selection state</li>
-          <li><strong>Drag:</strong> Start, move, and end drag operations</li>
-          <li><strong>Create:</strong> Instantiate new components</li>
-          <li><strong>Update:</strong> Modify component properties</li>
-          <li><strong>Delete:</strong> Remove components</li>
-          <li><strong>Export:</strong> Generate GIF/MP4 from canvas</li>
-          <li><strong>Import:</strong> Load components from external sources</li>
+        <h4>� Data-Driven Architecture</h4>
+        <p>
+          This lab is <strong>completely data-driven</strong> with zero hardcoded plugin knowledge! 
+          All information is dynamically discovered from the plugin's JSON files.
+        </p>
+        <ul className="tips-list">
+          <li><strong>✅ Plugin Discovery:</strong> Automatically scans for all @renderx-plugins packages</li>
+          <li><strong>✅ Sequence Loading:</strong> Dynamically imports all JSON sequences from plugins</li>
+          <li><strong>✅ Topic Extraction:</strong> Parses topics from sequence beats automatically</li>
+          <li><strong>✅ Auto Registration:</strong> Detects and registers plugins with Musical Conductor</li>
+          <li><strong>🔄 No Hardcoding:</strong> Works with any plugin that follows conventions</li>
         </ul>
+        <p>
+          <strong>What this means:</strong> Install any RenderX plugin package, and this lab 
+          will automatically discover its sequences, topics, and capabilities—no code changes needed!
+        </p>
       </div>
 
       <div className="ref-section">
@@ -90,8 +96,8 @@ function QuickReference() {
         <ul className="tips-list">
           <li><strong>✅ Musical Conductor:</strong> Fully initialized and ready to orchestrate symphonies</li>
           <li><strong>✅ EventBus:</strong> Available for publishing and subscribing to events</li>
-          <li><strong>✅ Canvas Plugin:</strong> Registered and ready to handle sequences</li>
-          <li><strong>⚠️ Visual Canvas:</strong> No actual canvas UI exists, but operations will execute</li>
+          <li><strong>✅ Dynamic Registration:</strong> Plugins are discovered and registered automatically</li>
+          <li><strong>⚠️ Visual UI:</strong> No actual canvas UI exists, but all operations execute</li>
         </ul>
         <p>
           <strong>What this means:</strong> Both the <strong>Topic Publisher</strong> and 

@@ -1,57 +1,93 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { initializeCommunicationSystem } from 'musical-conductor'
-import { register as registerCanvasComponent } from '@renderx-plugins/canvas-component'
 
 // Create context for the Conductor
 const ConductorContext = createContext(null)
 
 /**
+ * Dynamically discover and load all plugins
+ * This is data-driven with no hardcoded plugin knowledge
+ */
+async function discoverAndRegisterPlugins(conductor) {
+  // Pattern to discover all @renderx-plugins packages
+  const pluginModules = import.meta.glob('../../node_modules/@renderx-plugins/*/index.js')
+  
+  const registeredPlugins = []
+  
+  for (const [path, importFn] of Object.entries(pluginModules)) {
+    const pluginName = path.match(/@renderx-plugins\/([^/]+)/)?.[1]
+    
+    try {
+      const module = await importFn()
+      
+      // Try to register if the plugin exports a register function
+      if (module.register && typeof module.register === 'function') {
+        module.register(conductor)
+        registeredPlugins.push(pluginName)
+        console.log(`✅ Registered plugin: ${pluginName}`)
+      } else {
+        console.log(`ℹ️ Plugin ${pluginName} loaded (no register function)`)
+      }
+    } catch (err) {
+      console.warn(`⚠️ Failed to load plugin ${pluginName}:`, err.message)
+    }
+  }
+  
+  return registeredPlugins
+}
+
+/**
  * ConductorProvider - Initializes and provides the Musical Conductor
+ * Dynamically discovers and registers all plugins
  */
 export function ConductorProvider({ children }) {
   const [conductorClient, setConductorClient] = useState(null)
   const [eventBus, setEventBus] = useState(null)
   const [isInitialized, setIsInitialized] = useState(false)
   const [error, setError] = useState(null)
+  const [registeredPlugins, setRegisteredPlugins] = useState([])
 
   useEffect(() => {
-    try {
-      console.log('🎼 Initializing Musical Conductor...')
-      
-      // Initialize the communication system
-      const { conductor, eventBus: bus } = initializeCommunicationSystem()
-      
-      console.log('✅ Musical Conductor initialized:', conductor)
-      console.log('✅ EventBus initialized:', bus)
-      
-      // Register the canvas component plugin
+    async function initialize() {
       try {
-        registerCanvasComponent(conductor)
-        console.log('✅ Canvas Component plugin registered')
-      } catch (regError) {
-        console.warn('⚠️ Canvas Component registration:', regError.message)
+        console.log('🎼 Initializing Musical Conductor...')
+        
+        // Initialize the communication system
+        const { conductor, eventBus: bus } = initializeCommunicationSystem()
+        
+        console.log('✅ Musical Conductor initialized:', conductor)
+        console.log('✅ EventBus initialized:', bus)
+        
+        // Dynamically discover and register all plugins
+        const plugins = await discoverAndRegisterPlugins(conductor)
+        setRegisteredPlugins(plugins)
+        
+        console.log(`📦 Registered ${plugins.length} plugin(s):`, plugins)
+        
+        setConductorClient(conductor)
+        setEventBus(bus)
+        setIsInitialized(true)
+        
+        // Log available methods
+        if (conductor) {
+          console.log('🎵 Conductor methods:', Object.keys(conductor))
+        }
+        
+      } catch (err) {
+        console.error('❌ Failed to initialize Conductor:', err)
+        setError(err)
       }
-      
-      setConductorClient(conductor)
-      setEventBus(bus)
-      setIsInitialized(true)
-      
-      // Log available methods
-      if (conductor) {
-        console.log('🎵 Conductor methods:', Object.keys(conductor))
-      }
-      
-    } catch (err) {
-      console.error('❌ Failed to initialize Conductor:', err)
-      setError(err)
     }
+    
+    initialize()
   }, [])
 
   const value = {
     conductor: conductorClient,
     eventBus,
     isInitialized,
-    error
+    error,
+    registeredPlugins
   }
 
   return (

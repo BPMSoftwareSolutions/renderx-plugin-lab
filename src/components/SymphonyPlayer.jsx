@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { resolveInteraction } from '@renderx-plugins/host-sdk'
+import { useState, useEffect } from 'react'
 import { useConductor, useConductorStatus } from '../ConductorProvider'
+import { getSequencesMetadata } from '../utils/sequenceLoader'
 import './SymphonyPlayer.css'
 
 /**
@@ -10,87 +10,37 @@ import './SymphonyPlayer.css'
 function SymphonyPlayer() {
   const conductor = useConductor()
   const { isInitialized, error: initError } = useConductorStatus()
-  const [selectedSymphony, setSelectedSymphony] = useState('select')
-  const [symphonyData, setSymphonyData] = useState('{"elementId": "test-element-1"}')
+  const [availableSymphonies, setAvailableSymphonies] = useState([])
+  const [selectedSymphony, setSelectedSymphony] = useState('')
+  const [symphonyData, setSymphonyData] = useState('{}')
   const [playLog, setPlayLog] = useState([])
   const [error, setError] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
 
-  // Available symphonies from the canvas-component plugin
-  const availableSymphonies = [
-    { 
-      id: 'select',
-      interaction: 'canvas.component.select',
-      name: 'Select Component',
-      pluginId: 'CanvasComponentSelectionPlugin',
-      sequenceId: 'canvas-component-select-symphony',
-      defaultData: '{"elementId": "test-element-1"}'
-    },
-    { 
-      id: 'deselect',
-      interaction: 'canvas.component.deselect',
-      name: 'Deselect Component',
-      pluginId: 'CanvasComponentSelectionPlugin',
-      sequenceId: 'canvas-component-deselect-symphony',
-      defaultData: '{"elementId": "test-element-1"}'
-    },
-    { 
-      id: 'drag-start',
-      interaction: 'canvas.component.drag.start',
-      name: 'Drag Start',
-      pluginId: 'CanvasComponentDragStartPlugin',
-      sequenceId: 'canvas-component-drag-start-symphony',
-      defaultData: '{"elementId": "test-element-1", "x": 100, "y": 100}'
-    },
-    { 
-      id: 'drag-move',
-      interaction: 'canvas.component.drag.move',
-      name: 'Drag Move',
-      pluginId: 'CanvasComponentDragMovePlugin',
-      sequenceId: 'canvas-component-drag-move-symphony',
-      defaultData: '{"elementId": "test-element-1", "x": 150, "y": 150}'
-    },
-    { 
-      id: 'drag-end',
-      interaction: 'canvas.component.drag.end',
-      name: 'Drag End',
-      pluginId: 'CanvasComponentDragEndPlugin',
-      sequenceId: 'canvas-component-drag-end-symphony',
-      defaultData: '{"elementId": "test-element-1", "x": 200, "y": 200}'
-    },
-    { 
-      id: 'create',
-      interaction: 'canvas.component.create',
-      name: 'Create Component',
-      pluginId: 'CanvasComponentCreatePlugin',
-      sequenceId: 'canvas-component-create-symphony',
-      defaultData: '{"type": "button", "x": 100, "y": 100}'
-    },
-    { 
-      id: 'update',
-      interaction: 'canvas.component.update',
-      name: 'Update Component',
-      pluginId: 'CanvasComponentUpdatePlugin',
-      sequenceId: 'canvas-component-update-symphony',
-      defaultData: '{"elementId": "test-element-1", "properties": {"width": 200}}'
-    },
-    { 
-      id: 'delete',
-      interaction: 'canvas.component.delete',
-      name: 'Delete Component',
-      pluginId: 'CanvasComponentDeletePlugin',
-      sequenceId: 'canvas-component-delete-symphony',
-      defaultData: '{"elementId": "test-element-1"}'
-    },
-    { 
-      id: 'export-gif',
-      interaction: 'canvas.component.export.gif',
-      name: 'Export GIF',
-      pluginId: 'CanvasComponentExportPlugin',
-      sequenceId: 'canvas-component-export-gif-symphony',
-      defaultData: '{"elementId": "test-element-1", "duration": 3000}'
+  // Load available symphonies from the plugin
+  useEffect(() => {
+    try {
+      const sequences = getSequencesMetadata()
+      console.log('📋 Loaded sequences:', sequences)
+      
+      const formattedSequences = sequences.map(seq => ({
+        id: seq.id,
+        name: seq.name || seq.id,
+        pluginId: seq.pluginId,
+        sequenceId: seq.id,
+        topics: seq.topics || [],
+        defaultData: '{}'
+      }))
+      
+      setAvailableSymphonies(formattedSequences)
+      if (formattedSequences.length > 0) {
+        setSelectedSymphony(formattedSequences[0].id)
+      }
+    } catch (err) {
+      console.error('Failed to load sequences:', err)
+      setError(err.message)
     }
-  ]
+  }, [])
 
   const handleSymphonyChange = (e) => {
     const symphonyId = e.target.value
@@ -119,20 +69,8 @@ function SymphonyPlayer() {
         data: parsedData
       })
       
-      // Try to resolve interaction first
-      let pluginId = symphonyInfo.pluginId
-      let sequenceId = symphonyInfo.sequenceId
-      
-      try {
-        const route = resolveInteraction(symphonyInfo.interaction)
-        if (route) {
-          pluginId = route.pluginId
-          sequenceId = route.sequenceId
-          console.log('✅ Resolved interaction:', route)
-        }
-      } catch (resolveErr) {
-        console.warn('Could not resolve interaction, using defaults:', resolveErr.message)
-      }
+      const pluginId = symphonyInfo.pluginId
+      const sequenceId = symphonyInfo.sequenceId
       
       // Play the symphony via conductor
       let result
@@ -194,8 +132,14 @@ function SymphonyPlayer() {
     <div className="symphony-player">
       <h3>🎵 Symphony Player</h3>
       <p className="description">
-        Execute symphonies via the Conductor to test canvas component operations
+        Execute symphonies via the Conductor to test plugin operations
       </p>
+
+      {availableSymphonies.length > 0 && (
+        <div className="stats-badge">
+          ✅ Loaded {availableSymphonies.length} symphon{availableSymphonies.length !== 1 ? 'ies' : 'y'} from plugin
+        </div>
+      )}
 
       {initError && (
         <div className="error-message">
@@ -244,12 +188,18 @@ function SymphonyPlayer() {
           </div>
           <div className="info-row">
             <span className="info-label">Sequence ID:</span>
-            <code>{selectedSymphonyInfo.sequenceId}</code>
+            <code>{selectedSymphonyInfo.sequenceId || selectedSymphonyInfo.id}</code>
           </div>
-          <div className="info-row">
-            <span className="info-label">Interaction:</span>
-            <code>{selectedSymphonyInfo.interaction}</code>
-          </div>
+          {selectedSymphonyInfo.topics && selectedSymphonyInfo.topics.length > 0 && (
+            <div className="info-row">
+              <span className="info-label">Topics:</span>
+              <div className="topics-badges">
+                {selectedSymphonyInfo.topics.map((topic, idx) => (
+                  <span key={idx} className="topic-badge">{topic}</span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -261,7 +211,7 @@ function SymphonyPlayer() {
           onChange={(e) => setSymphonyData(e.target.value)}
           className="data-input"
           rows={6}
-          placeholder='{"elementId": "test-element-1"}'
+          placeholder='{}'
         />
       </div>
 

@@ -1,77 +1,51 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useEventBus, useConductorStatus } from '../ConductorProvider'
+import { getTopicsWithMetadata } from '../utils/sequenceLoader'
 import './TopicPublisher.css'
 
 /**
  * TopicPublisher - Interactive component for publishing topics to the EventRouter
- * Allows testing various canvas component topics with custom payloads
+ * Allows testing plugin topics with custom payloads
  */
 function TopicPublisher() {
   const eventBus = useEventBus()
   const { isInitialized } = useConductorStatus()
-  const [selectedTopic, setSelectedTopic] = useState('canvas.component.select')
-  const [payload, setPayload] = useState('{"elementId": "test-element-1"}')
+  const [availableTopics, setAvailableTopics] = useState([])
+  const [selectedTopic, setSelectedTopic] = useState('')
+  const [payload, setPayload] = useState('{}')
   const [publishLog, setPublishLog] = useState([])
   const [error, setError] = useState(null)
 
-  // Available topics from the canvas-component plugin
-  const availableTopics = [
-    { 
-      value: 'canvas.component.select', 
-      label: 'Select Component',
-      defaultPayload: '{"elementId": "test-element-1"}'
-    },
-    { 
-      value: 'canvas.component.deselect', 
-      label: 'Deselect Component',
-      defaultPayload: '{"elementId": "test-element-1"}'
-    },
-    { 
-      value: 'canvas.component.drag.start', 
-      label: 'Drag Start',
-      defaultPayload: '{"elementId": "test-element-1", "x": 100, "y": 100}'
-    },
-    { 
-      value: 'canvas.component.drag.move', 
-      label: 'Drag Move',
-      defaultPayload: '{"elementId": "test-element-1", "x": 150, "y": 150, "deltaX": 50, "deltaY": 50}'
-    },
-    { 
-      value: 'canvas.component.drag.end', 
-      label: 'Drag End',
-      defaultPayload: '{"elementId": "test-element-1", "x": 200, "y": 200}'
-    },
-    { 
-      value: 'canvas.component.selection.changed', 
-      label: 'Selection Changed',
-      defaultPayload: '{"selectedIds": ["test-element-1", "test-element-2"]}'
-    },
-    { 
-      value: 'canvas.component.create', 
-      label: 'Create Component',
-      defaultPayload: '{"type": "button", "x": 100, "y": 100, "width": 120, "height": 40}'
-    },
-    { 
-      value: 'canvas.component.update', 
-      label: 'Update Component',
-      defaultPayload: '{"elementId": "test-element-1", "properties": {"width": 200, "height": 100}}'
-    },
-    { 
-      value: 'canvas.component.delete', 
-      label: 'Delete Component',
-      defaultPayload: '{"elementId": "test-element-1"}'
-    },
-    { 
-      value: 'canvas.component.export.gif', 
-      label: 'Export as GIF',
-      defaultPayload: '{"elementId": "test-element-1", "duration": 3000}'
-    },
-    { 
-      value: 'canvas.component.import.requested', 
-      label: 'Import Components',
-      defaultPayload: '{"source": "clipboard", "format": "ui"}'
+  // Load available topics from the plugin
+  useEffect(() => {
+    try {
+      const topicsData = getTopicsWithMetadata()
+      console.log('📋 Loaded topics:', topicsData)
+      
+      const formattedTopics = topicsData.map(item => ({
+        value: item.topic,
+        label: formatTopicLabel(item.topic),
+        defaultPayload: '{}',
+        sequences: item.sequences
+      }))
+      
+      setAvailableTopics(formattedTopics)
+      if (formattedTopics.length > 0) {
+        setSelectedTopic(formattedTopics[0].value)
+      }
+    } catch (err) {
+      console.error('Failed to load topics:', err)
+      setError(err.message)
     }
-  ]
+  }, [])
+
+  // Helper to format topic names nicely
+  const formatTopicLabel = (topic) => {
+    return topic
+      .split('.')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
 
   const handleTopicChange = (e) => {
     const topic = e.target.value
@@ -131,8 +105,14 @@ function TopicPublisher() {
     <div className="topic-publisher">
       <h3>📢 Topic Publisher</h3>
       <p className="description">
-        Publish events to the EventRouter to test canvas component interactions
+        Publish events to the EventRouter to test plugin interactions
       </p>
+
+      {availableTopics.length > 0 && (
+        <div className="stats-badge">
+          ✅ Loaded {availableTopics.length} topic{availableTopics.length !== 1 ? 's' : ''} from plugin
+        </div>
+      )}
 
       <div className="form-group">
         <label htmlFor="topic-select">Select Topic:</label>
@@ -158,9 +138,33 @@ function TopicPublisher() {
           onChange={(e) => setPayload(e.target.value)}
           className="payload-input"
           rows={6}
-          placeholder='{"elementId": "test-element-1"}'
+          placeholder='{}'
         />
       </div>
+
+      {selectedTopic && availableTopics.length > 0 && (
+        <div className="topic-info">
+          <h4>📌 Topic Information</h4>
+          {(() => {
+            const topicInfo = availableTopics.find(t => t.value === selectedTopic)
+            if (topicInfo && topicInfo.sequences && topicInfo.sequences.length > 0) {
+              return (
+                <div>
+                  <p><strong>Used by {topicInfo.sequences.length} sequence(s):</strong></p>
+                  <ul className="sequence-list">
+                    {topicInfo.sequences.map((seq, idx) => (
+                      <li key={idx}>
+                        {seq.name} <code>({seq.pluginId})</code>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            }
+            return <p>No sequences found for this topic</p>
+          })()}
+        </div>
+      )}
 
       {error && (
         <div className="error-message">
@@ -168,7 +172,7 @@ function TopicPublisher() {
         </div>
       )}
 
-      <button onClick={handlePublish} className="publish-btn">
+      <button onClick={handlePublish} className="publish-btn" disabled={!availableTopics.length}>
         📢 Publish Topic
       </button>
 
