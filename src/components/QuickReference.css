@@ -1,0 +1,126 @@
+.quick-reference {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.quick-reference h3 {
+  margin-top: 0;
+  color: #667eea;
+  font-size: 1.5rem;
+}
+
+.ref-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ref-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.ref-section h4 {
+  color: #764ba2;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.ref-section p {
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.ref-section code {
+  background: #f8f9fa;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #667eea;
+  font-size: 0.9em;
+}
+
+.example-box {
+  background: #f8f9fa;
+  border-left: 4px solid #667eea;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 0.75rem;
+}
+
+.example-box strong {
+  color: #667eea;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.example-box pre {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: #333;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border: 1px solid #e0e0e0;
+}
+
+.comparison-table th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.comparison-table tbody tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+.comparison-table td {
+  color: #555;
+}
+
+.action-list,
+.tips-list {
+  margin: 0.75rem 0 0 0;
+  padding-left: 1.5rem;
+}
+
+.action-list li,
+.tips-list li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.action-list strong {
+  color: #667eea;
+}
+
+.tips-list li {
+  position: relative;
+}
+
+.tips-list li::before {
+  content: '💡';
+  position: absolute;
+  left: -1.5rem;
+}
