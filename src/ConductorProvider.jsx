@@ -32,27 +32,63 @@ async function registerPlugins(conductor) {
     if (conductor.pluginManager) {
       const pluginManager = conductor.pluginManager
       
-      // Add to mountedPlugins directly
-      if (pluginManager.mountedPlugins) {
-        pluginManager.mountedPlugins.set('CanvasComponentPlugin', {
-          id: 'CanvasComponentPlugin',
-          handlers: CanvasComponentPlugin.handlers || {}
-        })
-        console.log('Added CanvasComponentPlugin to mountedPlugins')
-      }
+      // Use pluginInterface to properly register the plugin
+      // This ensures handlers are correctly linked to the PluginManager
+      const pluginId = 'CanvasComponentPlugin'
+      const handlers = CanvasComponentPlugin.handlers || {}
       
-      // Add to pluginHandlers map
-      if (pluginManager.pluginHandlers) {
-        pluginManager.pluginHandlers.set('CanvasComponentPlugin', CanvasComponentPlugin.handlers || {})
-        console.log('Added CanvasComponentPlugin handlers to pluginHandlers')
-      }
+      console.log('Plugin handlers available:', Object.keys(handlers))
       
-      // Add to discoveredPluginIds
-      if (pluginManager.discoveredPluginIds && Array.isArray(pluginManager.discoveredPluginIds)) {
-        if (!pluginManager.discoveredPluginIds.includes('CanvasComponentPlugin')) {
-          pluginManager.discoveredPluginIds.push('CanvasComponentPlugin')
+      // Use conductor's PluginInterface to register
+      if (conductor.pluginInterface && conductor.pluginInterface.registerPlugin) {
+        try {
+          conductor.pluginInterface.registerPlugin(pluginId, handlers)
+          console.log(`✅ Registered plugin via PluginInterface: ${pluginId}`)
+        } catch (err) {
+          console.error('PluginInterface.registerPlugin failed:', err)
+          // Fallback to manual registration
+          manuallyRegisterPlugin(pluginManager, pluginId, handlers)
         }
-        console.log('Added CanvasComponentPlugin to discoveredPluginIds')
+      } else {
+        // Manual registration as fallback
+        manuallyRegisterPlugin(pluginManager, pluginId, handlers)
+      }
+      
+      function manuallyRegisterPlugin(pm, id, hdlrs) {
+        // Add to mountedPlugins directly
+        if (pm.mountedPlugins) {
+          pm.mountedPlugins.set(id, {
+            id,
+            handlers: hdlrs
+          })
+          console.log(`Added ${id} to mountedPlugins`)
+        }
+        
+        // Add to pluginHandlers map
+        if (pm.pluginHandlers) {
+          pm.pluginHandlers.set(id, hdlrs)
+          console.log(`Added ${id} handlers to pluginHandlers`)
+        }
+        
+        // Add to discoveredPluginIds
+        if (pm.discoveredPluginIds && Array.isArray(pm.discoveredPluginIds)) {
+          if (!pm.discoveredPluginIds.includes(id)) {
+            pm.discoveredPluginIds.push(id)
+          }
+          console.log(`Added ${id} to discoveredPluginIds`)
+        }
+        
+        // DEBUG: Verify the handler can be retrieved
+        console.log('🔍 DEBUG: Verifying handler registration...')
+        if (pm.pluginHandlers) {
+          const retrievedHandlers = pm.pluginHandlers.get(id)
+          console.log(`Retrieved handlers for ${id}:`, retrievedHandlers ? Object.keys(retrievedHandlers) : 'NOT FOUND')
+          if (retrievedHandlers && retrievedHandlers.createNode) {
+            console.log(`✅ createNode handler found: ${typeof retrievedHandlers.createNode}`)
+          } else {
+            console.warn(`❌ createNode handler NOT found in retrieved handlers`)
+          }
+        }
       }
       
       registeredPlugins.push('CanvasComponentPlugin')

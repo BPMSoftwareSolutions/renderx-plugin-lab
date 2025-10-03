@@ -2,6 +2,50 @@
 
 A **completely data-driven** testing environment for RenderX plugins. This lab makes zero assumptions about installed plugins—everything is dynamically discovered from JSON files and package exports.
 
+## 🚀 Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Run E2E tests
+npm run cypress:open      # Interactive mode with Cypress UI
+npm run cypress:headless  # Headless mode for CI/CD
+```
+
+## 📊 Test Status
+
+- ✅ **1/3 tests passing** - Plugin registration verified
+- ⚠️ **2/3 tests failing** - Handler invocation issue (see [DEBUGGING_NOTES.md](./DEBUGGING_NOTES.md))
+
+## 🧪 Testing Infrastructure
+
+### Cypress E2E Tests
+
+Tests are located in `cypress/e2e/`:
+- `plugin-check.cy.js` - Verifies plugin registration ✅
+- `symphony-player.cy.js` - Tests symphony execution and component creation ⚠️
+
+### Console Log Capture
+
+All test runs automatically save browser console logs to `.logs/` directory:
+- **Format:** `.logs/{spec-name}-{test-name}-{timestamp}.log`
+- **Contains:** All console.log, .error, .warn, .info messages
+- **Purpose:** Debug React initialization, plugin behavior, and symphony execution
+
+```bash
+# View captured logs
+ls .logs/
+cat .logs/symphony-player-*.log
+
+# Search for specific patterns
+grep "handler=?" .logs/*.log
+grep "Playing symphony" .logs/*.log
+```
+
 ## ✨ Key Features
 
 ### 🔍 **100% Data-Driven**
@@ -343,4 +387,47 @@ Vite provides instant HMR (Hot Module Replacement), so any changes you make will
 📚 Built-in reference documentation  
 🔥 Fast refresh during development  
 📱 Responsive design  
-🧪 Comprehensive testing playground
+🧪 Comprehensive testing playground  
+🤖 Automated E2E tests with Cypress  
+📝 Console log capture for debugging
+
+---
+
+## 🐛 Known Issues
+
+### Handler Invocation Issue (Active Investigation)
+
+**Status:** Plugin handlers are not being invoked during symphony execution.
+
+**Symptoms:**
+- Symphonies execute successfully (all beats complete)
+- Execution logs show completion
+- BUT: All beats show "handler=?" in console
+- Result: No events are published, canvas stays empty
+
+**Investigation:**
+See [DEBUGGING_NOTES.md](./DEBUGGING_NOTES.md) for detailed analysis including:
+- Timeline of debugging attempts
+- Root cause hypothesis
+- Console log analysis
+- Attempted solutions
+- Recommended next steps
+
+**Workaround:**
+Topic Publisher still works for direct event publishing (bypasses symphony/handler system).
+
+**Impact:**
+- ⚠️ 2/3 E2E tests failing
+- ⚠️ Symphony execution doesn't trigger component creation
+- ✅ Plugin registration works
+- ✅ Sequence discovery works (29 sequences found)
+- ✅ UI and navigation work correctly
+
+---
+
+## 📚 Documentation
+
+- **README.md** (this file) - Overview and usage guide
+- **DEBUGGING_NOTES.md** - Detailed investigation of handler invocation issue
+- **cypress/e2e/** - E2E test specifications
+- **.logs/** - Captured console logs from test runs
