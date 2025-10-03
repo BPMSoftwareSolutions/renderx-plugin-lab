@@ -82,11 +82,28 @@ function QuickReference() {
       </div>
 
       <div className="ref-section">
+        <h4>⚠️ Standalone Lab Limitations</h4>
+        <p>
+          This is a <strong>standalone testing environment</strong> without a full RenderX host. 
+          Some features require the host application to initialize certain services:
+        </p>
+        <ul className="tips-list">
+          <li><strong>Conductor:</strong> Not initialized in standalone mode. Symphony Player will simulate execution and show what would be sent.</li>
+          <li><strong>EventRouter:</strong> Available and functional for testing topic publishing.</li>
+          <li><strong>Canvas Elements:</strong> No actual canvas or components exist, so operations won't have visual effects.</li>
+        </ul>
+        <p>
+          <strong>Recommendation:</strong> Use the <strong>Topic Publisher</strong> for fully functional testing, 
+          and the <strong>Symphony Player</strong> to understand the API structure.
+        </p>
+      </div>
+
+      <div className="ref-section">
         <h4>💡 Testing Tips</h4>
         <ul className="tips-list">
           <li>Open the browser console (F12) to see detailed logs</li>
           <li>Try publishing topics first to see events in action</li>
-          <li>Play symphonies to execute complete workflows</li>
+          <li>Use Symphony Player in simulation mode to see data structures</li>
           <li>Experiment with different payload structures</li>
           <li>Check the execution logs to see what happened</li>
           <li>Combine multiple actions to test complex scenarios</li>

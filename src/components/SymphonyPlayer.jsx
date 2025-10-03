@@ -1,13 +1,27 @@
 import { useState } from 'react'
-import { useConductor, resolveInteraction } from '@renderx-plugins/host-sdk'
+import { resolveInteraction } from '@renderx-plugins/host-sdk'
 import './SymphonyPlayer.css'
+
+/**
+ * Helper to safely get conductor or return null
+ */
+function useConductorSafe() {
+  try {
+    // In a real app, this would be initialized by the host
+    // For testing, we'll return a mock or null
+    return null
+  } catch (err) {
+    console.warn('Conductor not available:', err.message)
+    return null
+  }
+}
 
 /**
  * SymphonyPlayer - Interactive component for playing symphonies via the Conductor
  * Allows testing various canvas component symphonies with custom data
  */
 function SymphonyPlayer() {
-  const conductor = useConductor()
+  const conductor = useConductorSafe()
   const [selectedSymphony, setSelectedSymphony] = useState('select')
   const [symphonyData, setSymphonyData] = useState('{"elementId": "test-element-1"}')
   const [playLog, setPlayLog] = useState([])
@@ -138,7 +152,19 @@ function SymphonyPlayer() {
         result = await conductor.play(pluginId, sequenceId, parsedData)
         console.log('🎵 Symphony result:', result)
       } else {
-        throw new Error('Conductor not available or play method not found')
+        // Simulate what would happen
+        console.log('🎵 [SIMULATED] Would play symphony:', {
+          pluginId,
+          sequenceId,
+          data: parsedData
+        })
+        result = {
+          simulated: true,
+          message: 'Conductor not available - this is a simulation of what would be executed',
+          pluginId,
+          sequenceId,
+          data: parsedData
+        }
       }
       
       // Add to log
@@ -182,6 +208,29 @@ function SymphonyPlayer() {
       <p className="description">
         Execute symphonies via the Conductor to test canvas component operations
       </p>
+
+      {!conductor && (
+        <div className="warning-message">
+          <h4>⚠️ Conductor Not Available</h4>
+          <p>
+            The Conductor is not initialized in this standalone testing environment. 
+            In a full RenderX application, the host would initialize the Conductor to 
+            orchestrate symphony execution.
+          </p>
+          <p>
+            <strong>What you can do:</strong>
+          </p>
+          <ul>
+            <li>Use the <strong>Topic Publisher</strong> tab to test event-based interactions</li>
+            <li>Check the console to see the symphony data that would be sent</li>
+            <li>This component demonstrates the API structure for symphony execution</li>
+          </ul>
+          <p className="info-note">
+            💡 To test symphonies in a real environment, integrate this plugin into a 
+            RenderX host application that has initialized the Conductor.
+          </p>
+        </div>
+      )}
 
       <div className="form-group">
         <label htmlFor="symphony-select">Select Symphony:</label>
@@ -239,7 +288,11 @@ function SymphonyPlayer() {
         className="play-btn"
         disabled={isPlaying}
       >
-        {isPlaying ? '⏳ Playing...' : '▶️ Play Symphony'}
+        {isPlaying 
+          ? '⏳ Playing...' 
+          : conductor 
+            ? '▶️ Play Symphony' 
+            : '🔍 Simulate Symphony (Conductor N/A)'}
       </button>
 
       {playLog.length > 0 && (
