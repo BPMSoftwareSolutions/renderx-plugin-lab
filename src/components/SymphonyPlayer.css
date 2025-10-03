@@ -26,8 +26,31 @@
   border-radius: 20px;
   font-size: 0.875rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   border: 1px solid #c3e6cb;
+}
+
+.current-selection {
+  background: #f3e7ff;
+  border: 1px solid #d4b3ff;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.current-selection strong {
+  color: #6a2c91;
+  margin-right: 0.5rem;
+}
+
+.current-selection code {
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  color: #764ba2;
+  font-size: 0.85rem;
+  border: 1px solid #d0d0d0;
 }
 
 .error-message {
@@ -98,6 +121,16 @@
   font-size: 1rem;
   background: white;
   cursor: pointer;
+  min-height: 45px;
+  color: #333;
+}
+
+.symphony-select option {
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #333;
+  background: white;
   transition: border-color 0.2s;
 }
 

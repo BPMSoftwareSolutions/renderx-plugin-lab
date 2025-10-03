@@ -141,6 +141,12 @@ function SymphonyPlayer() {
         </div>
       )}
 
+      {selectedSymphony && selectedSymphonyInfo && (
+        <div className="current-selection">
+          <strong>Current Symphony:</strong> <code>{selectedSymphonyInfo.name || selectedSymphony}</code>
+        </div>
+      )}
+
       {initError && (
         <div className="error-message">
           <h4>❌ Conductor Initialization Error</h4>
@@ -174,7 +180,7 @@ function SymphonyPlayer() {
         >
           {availableSymphonies.map(symphony => (
             <option key={symphony.id} value={symphony.id}>
-              {symphony.name}
+              {symphony.name || symphony.id}
             </option>
           ))}
         </select>

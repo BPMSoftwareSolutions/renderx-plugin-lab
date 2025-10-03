@@ -26,8 +26,31 @@
   border-radius: 20px;
   font-size: 0.875rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   border: 1px solid #c3e6cb;
+}
+
+.current-selection {
+  background: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.current-selection strong {
+  color: #0056b3;
+  margin-right: 0.5rem;
+}
+
+.current-selection code {
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  color: #667eea;
+  font-size: 0.85rem;
+  border: 1px solid #d0d0d0;
 }
 
 .form-group {
@@ -50,6 +73,8 @@
   background: white;
   cursor: pointer;
   transition: border-color 0.2s;
+  min-height: 45px;
+  color: #333;
 }
 
 .topic-select:hover {
@@ -60,6 +85,14 @@
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.topic-select option {
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #333;
+  background: white;
 }
 
 .payload-input {

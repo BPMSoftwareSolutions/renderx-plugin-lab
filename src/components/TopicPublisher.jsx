@@ -114,6 +114,12 @@ function TopicPublisher() {
         </div>
       )}
 
+      {selectedTopic && (
+        <div className="current-selection">
+          <strong>Current Topic:</strong> <code>{selectedTopic}</code>
+        </div>
+      )}
+
       <div className="form-group">
         <label htmlFor="topic-select">Select Topic:</label>
         <select 
@@ -124,7 +130,7 @@ function TopicPublisher() {
         >
           {availableTopics.map(topic => (
             <option key={topic.value} value={topic.value}>
-              {topic.label} ({topic.value})
+              {topic.value}
             </option>
           ))}
         </select>
